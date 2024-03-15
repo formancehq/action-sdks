@@ -22,13 +22,14 @@ export async function run(): Promise<void> {
     core.info(`Last release: ${lastStackRelease.tag_name}`)
 
     // Retrieve the `openapi.json` file from the last release
-    const releaseAssets = await octokit.rest.repos.listReleaseAssets({
-      owner: organization,
-      repo: repository,
-      release_id: lastStackRelease.id
-    })
+    // Loop through the assets to find the `openapi.json` file and get its download URL
+    // Loop until all pages have been checked or the `openapi.json` file is found
 
-    const openapiAsset = releaseAssets.data.find(
+    core.debug(
+      `Found ${lastStackRelease.assets.length} assets ; searching for 'openapi.json'`
+    )
+
+    const openapiAsset = lastStackRelease.assets.find(
       asset => asset.name === 'openapi.json'
     )
     if (!openapiAsset) {
