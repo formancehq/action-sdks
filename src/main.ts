@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import { getOctokit } from '@actions/github'
 
 /**
  * The main function for the action.
@@ -7,18 +7,36 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const organization = core.getInput('organization')
+    const repository = core.getInput('repository')
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    // Get octokit
+    const octokit = getOctokit(core.getInput('token'))
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const releases = await octokit.rest.repos.listReleases({
+      owner: organization,
+      repo: repository
+    })
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    const lastStackRelease = releases.data[0]
+    core.info(`Last release: ${lastStackRelease.tag_name}`)
+
+    // Retrieve the `openapi.json` file from the last release
+    const releaseAssets = await octokit.rest.repos.listReleaseAssets({
+      owner: organization,
+      repo: repository,
+      release_id: lastStackRelease.id
+    })
+
+    const openapiAsset = releaseAssets.data.find(
+      asset => asset.name === 'openapi.json'
+    )
+    if (!openapiAsset) {
+      throw new Error('No `openapi.json` file found in the last release')
+    }
+
+    // Output the download URL
+    core.setOutput('openapi_spec_url', openapiAsset.browser_download_url)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

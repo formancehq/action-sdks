@@ -54,11 +54,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test Local Action
-        id: test-action
+        id: get-openapi-spec
         uses: ./
         with:
-          milliseconds: 2000
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+        run: echo "${{ steps.test-action.outputs.openapi_spec_url }}"

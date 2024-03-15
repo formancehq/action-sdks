@@ -1,23 +1,27 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
-
-# Add your action's branding here. This will appear on the GitHub Marketplace.
-branding:
-  icon: 'heart'
-  color: 'red'
+name: 'Get OpenAPI Spec URL'
+description:
+  'Retrieves the URL of an OpenAPI spec file from the stack GitHub repository by
+  reading the releases and tags.'
+author: 'Antoine Wacheux <antoine.wacheux@formance.com>'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  organization:
+    description: 'The name of the GitHub organization'
+    required: false
+    default: 'formancehq'
+  repository:
+    description: 'The name of the GitHub repository'
+    required: false
+    default: 'stack'
+  token:
+    description: 'The GitHub token'
     required: true
-    default: '1000'
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  openapi_spec_url:
+    description: 'The URL of the OpenAPI spec file'
 
 runs:
   using: node20
