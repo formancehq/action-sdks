@@ -21,19 +21,17 @@ export async function run(): Promise<void> {
     const lastStackRelease = releases.data[0]
     core.info(`Last release: ${lastStackRelease.tag_name}`)
 
-    // Retrieve the `openapi.json` file from the last release
-    // Loop through the assets to find the `openapi.json` file and get its download URL
-    // Loop until all pages have been checked or the `openapi.json` file is found
+    // Retrieve the `generate.json` file from the last release
 
     core.debug(
       `Found ${lastStackRelease.assets.length} assets ; searching for 'openapi.json'`
     )
 
     const openapiAsset = lastStackRelease.assets.find(
-      asset => asset.name === 'openapi.json'
+      asset => asset.name === 'generate.json'
     )
     if (!openapiAsset) {
-      throw new Error('No `openapi.json` file found in the last release')
+      throw new Error('No `generate.json` file found in the last release')
     }
 
     // Output the download URL
