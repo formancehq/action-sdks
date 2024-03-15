@@ -61,4 +61,4 @@ jobs:
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.openapi_spec_url }}"
+        run: echo "${{ steps.get-openapi-spec.outputs.openapi_spec_url }}"
