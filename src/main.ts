@@ -18,7 +18,11 @@ export async function run(): Promise<void> {
       repo: repository
     })
 
-    const lastStackRelease = releases.data[0]
+    const filteredReleases = releases.data.filter(
+      release => !release.prerelease
+    )
+
+    const lastStackRelease = filteredReleases[0]
     core.info(`Last release: ${lastStackRelease.tag_name}`)
 
     // Retrieve the `generate.json` file from the last release
